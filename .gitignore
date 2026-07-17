@@ -1,0 +1,31 @@
+# Singularity conda overlay (symlink to the shared essentia.ext3 — never commit)
+essentia.ext3
+*.ext3
+
+# Local HPC/cluster infra (kept on disk, not in the repo)
+sing
+singrw
+.essentia.sifpath
+sbatch/
+
+# Extracted audio clips (regenerate from SMALL_SAMPLES.zip via build_ground_truth.py)
+data/audio/
+
+# Model weights: embeddings are a symlink to staged weights; heads are downloaded
+models/embeddings
+models/heads/
+
+# Cached raw scores (regenerate via classify.py)
+results/scores/
+
+# SLURM logs
+logs/*.out
+logs/*.err
+
+# Vendored six bytecode
+pylib/__pycache__/
+__pycache__/
+*.pyc
+
+# Keep: scripts/, sbatch/, results/*.json, results/summary.md, FINDINGS.md,
+#       data/ground_truth.csv, data/eval_set.csv, pylib/six.py, sing/singrw/.sifpath

@@ -1,0 +1,70 @@
+{
+  "model": "jamendo-label",
+  "taxonomy": "mtg_jamendo",
+  "emb_algo": "effnet",
+  "n": 400,
+  "n_fail": 0,
+  "restricted_acc": {
+    "overall": 54.8,
+    "loop": 67.0,
+    "oneshot": 42.5,
+    "per_genre": {
+      "house": 78.0,
+      "techno": 84.0,
+      "dnb": 27.0,
+      "garage_dubstep": 30.0
+    },
+    "per_genre_loop": {
+      "house": 82.0,
+      "techno": 92.0,
+      "dnb": 44.0,
+      "garage_dubstep": 50.0
+    },
+    "per_genre_oneshot": {
+      "house": 74.0,
+      "techno": 76.0,
+      "dnb": 10.0,
+      "garage_dubstep": 10.0
+    }
+  },
+  "unrestricted_top1_acc": {
+    "overall": 3.5,
+    "loop": 6.5,
+    "oneshot": 0.5,
+    "on_genre_frac": 4.0
+  },
+  "confusion_restricted": {
+    "genres": [
+      "house",
+      "techno",
+      "dnb",
+      "garage_dubstep"
+    ],
+    "matrix_true_by_pred": [
+      [
+        78,
+        22,
+        0,
+        0
+      ],
+      [
+        9,
+        84,
+        0,
+        7
+      ],
+      [
+        14,
+        54,
+        27,
+        5
+      ],
+      [
+        7,
+        61,
+        2,
+        30
+      ]
+    ]
+  }
+}

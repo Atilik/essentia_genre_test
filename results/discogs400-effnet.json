@@ -1,0 +1,70 @@
+{
+  "model": "discogs400-effnet",
+  "taxonomy": "discogs400",
+  "emb_algo": "effnet",
+  "n": 400,
+  "n_fail": 0,
+  "restricted_acc": {
+    "overall": 44.0,
+    "loop": 51.5,
+    "oneshot": 36.5,
+    "per_genre": {
+      "house": 61.0,
+      "techno": 66.0,
+      "dnb": 32.0,
+      "garage_dubstep": 17.0
+    },
+    "per_genre_loop": {
+      "house": 56.0,
+      "techno": 70.0,
+      "dnb": 46.0,
+      "garage_dubstep": 34.0
+    },
+    "per_genre_oneshot": {
+      "house": 66.0,
+      "techno": 62.0,
+      "dnb": 18.0,
+      "garage_dubstep": 0.0
+    }
+  },
+  "unrestricted_top1_acc": {
+    "overall": 24.2,
+    "loop": 29.5,
+    "oneshot": 19.0,
+    "on_genre_frac": 38.5
+  },
+  "confusion_restricted": {
+    "genres": [
+      "house",
+      "techno",
+      "dnb",
+      "garage_dubstep"
+    ],
+    "matrix_true_by_pred": [
+      [
+        61,
+        38,
+        0,
+        1
+      ],
+      [
+        22,
+        66,
+        7,
+        5
+      ],
+      [
+        23,
+        36,
+        32,
+        9
+      ],
+      [
+        14,
+        57,
+        12,
+        17
+      ]
+    ]
+  }
+}

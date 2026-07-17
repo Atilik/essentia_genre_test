@@ -1,0 +1,70 @@
+{
+  "model": "discogs400-maest-10s-dw",
+  "taxonomy": "discogs400",
+  "emb_algo": "maest",
+  "n": 400,
+  "n_fail": 0,
+  "restricted_acc": {
+    "overall": 45.5,
+    "loop": 59.0,
+    "oneshot": 32.0,
+    "per_genre": {
+      "house": 59.0,
+      "techno": 68.0,
+      "dnb": 29.0,
+      "garage_dubstep": 26.0
+    },
+    "per_genre_loop": {
+      "house": 54.0,
+      "techno": 90.0,
+      "dnb": 42.0,
+      "garage_dubstep": 50.0
+    },
+    "per_genre_oneshot": {
+      "house": 64.0,
+      "techno": 46.0,
+      "dnb": 16.0,
+      "garage_dubstep": 2.0
+    }
+  },
+  "unrestricted_top1_acc": {
+    "overall": 32.8,
+    "loop": 44.5,
+    "oneshot": 21.0,
+    "on_genre_frac": 56.0
+  },
+  "confusion_restricted": {
+    "genres": [
+      "house",
+      "techno",
+      "dnb",
+      "garage_dubstep"
+    ],
+    "matrix_true_by_pred": [
+      [
+        59,
+        41,
+        0,
+        0
+      ],
+      [
+        23,
+        68,
+        8,
+        1
+      ],
+      [
+        18,
+        45,
+        29,
+        8
+      ],
+      [
+        14,
+        51,
+        9,
+        26
+      ]
+    ]
+  }
+}
