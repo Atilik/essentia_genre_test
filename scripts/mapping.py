@@ -12,7 +12,17 @@ Discogs style labels look like "Electronic---Deep House". MTG-Jamendo tags are f
 GENRES = ["house", "techno", "dnb", "garage_dubstep"]
 
 
-def _discogs_genre(label):
+# Sensitivity check (see FINDINGS "mapping robustness"): adjacent Discogs styles
+# the models actually reach for on our dnb/garage clips but which the strict
+# mapping ignores — 'Halftime' is a dnb feel, 'Grime' grew out of UK garage.
+# Not in the default mapping; enabled via expanded=True.
+EXPANDED_EXTRA = {
+    "dnb": ["halftime"],
+    "garage_dubstep": ["grime"],
+}
+
+
+def _discogs_genre(label, expanded=False):
     """One Discogs style label -> genre or None. Precedence avoids overlaps
     (e.g. 'Garage House' -> house, 'UK Garage' -> garage_dubstep)."""
     c = label.lower()
@@ -24,7 +34,11 @@ def _discogs_genre(label):
         return "dnb"
     if "dubstep" in c or "uk garage" in c or "speed garage" in c:
         return "garage_dubstep"
-    return None                                        # breakbeat/grime/etc. -> unmapped
+    if expanded:
+        for g, extras in EXPANDED_EXTRA.items():
+            if any(e in c for e in extras):
+                return g
+    return None                                        # breakbeat/ambient/etc. -> unmapped
 
 
 # MTG-Jamendo (87 flat tags): explicit — no 'garage' tag exists, dubstep only.
@@ -36,12 +50,14 @@ _MTG = {
 }
 
 
-def genre_labels(taxonomy, classes):
-    """taxonomy in {discogs400, discogs519, mtg_jamendo} -> {genre: [labels]}."""
+def genre_labels(taxonomy, classes, expanded=False):
+    """taxonomy in {discogs400, discogs519, mtg_jamendo} -> {genre: [labels]}.
+    expanded=True also folds in adjacent styles (see EXPANDED_EXTRA); MTG-Jamendo
+    has no equivalent tags (no halftime/grime in its 87), so it is unaffected."""
     out = {g: [] for g in GENRES}
     if taxonomy in ("discogs400", "discogs519"):
         for c in classes:
-            g = _discogs_genre(c)
+            g = _discogs_genre(c, expanded=expanded)
             if g:
                 out[g].append(c)
     elif taxonomy == "mtg_jamendo":
@@ -56,11 +72,11 @@ def genre_labels(taxonomy, classes):
     return out
 
 
-def genre_label_indices(taxonomy, classes):
+def genre_label_indices(taxonomy, classes, expanded=False):
     """{genre: [class indices]} for restricted-argmax scoring."""
     idx = {c: i for i, c in enumerate(classes)}
     return {g: [idx[l] for l in labels]
-            for g, labels in genre_labels(taxonomy, classes).items()}
+            for g, labels in genre_labels(taxonomy, classes, expanded).items()}
 
 
 if __name__ == "__main__":

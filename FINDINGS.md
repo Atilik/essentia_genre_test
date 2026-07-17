@@ -14,6 +14,8 @@ numbers in [results/summary.md](results/summary.md).
   one-shots). A single kick or FX hit carries little genre.
 - **Only house and techno are actually recognised** (up to 91% / 84%). **dnb and
   garage_dubstep collapse into techno** — they are never reliably found by any model.
+  This is *not* a missing-label or mapping problem (checked — see below): the models
+  dump these clips into `electronic` / `ambient` and never fire `drumnbass`/`dubstep`.
 - **MTG-Jamendo + specialised Discogs embeddings wins** (56.0%); the plain
   `discogs-effnet` embedding is 9 points worse (47.0%).
 - **MAEST (transformer) does not help, and longer context actively hurts**: best MAEST
@@ -80,6 +82,34 @@ unrelated tag. The Discogs400-MAEST models are the opposite: less accurate when
 restricted, but they actually commit to an on-genre label ~59% of the time. So "56%"
 means *"given that it must pick one of these four, it picks right 56% of the time"* — not
 that it would ever spontaneously label a clip "house".
+
+## Is the dnb/garage failure just a bad label mapping? No.
+
+The obvious objection: maybe those genres fail because the taxonomy lacks the labels,
+or because our mapping is too narrow. Both were checked.
+
+**The labels exist and are mapped**: Discogs400 has `Drum n Bass` + `Jungle` for dnb and
+`Dubstep`, `UK Garage`, `Speed Garage` for garage; MTG-Jamendo has `drumnbass` and
+`dubstep`. **The models simply don't fire them** — what they actually predict on these
+clips (unrestricted top-1) is a broad bucket:
+
+| true genre | jamendo-track predicts | discogs400-effnet predicts |
+|---|---|---|
+| house | 82× `electronic`, 18× **house** | 48× **House**, 16× Experimental |
+| **dnb** | 75× `electronic`, 11× `ambient`, 10× `classical` | 26× `Ambient`, 19× `Experimental`, **12× Drum n Bass** |
+| **garage_dubstep** | 77× `electronic`, 19× `ambient`, **2× dubstep** | 24× `Ambient`, 14× Techno, 7× `Grime` |
+
+Mean activations tell the same story: house/techno mapped labels fire at **0.21–0.33**,
+dnb/garage only at **0.03–0.14**. For jamendo-track, dnb's own labels (0.068) score
+*below* techno's (0.074) on dnb clips — the model has no confident signal to map.
+
+**Sensitivity check** ([results/mapping_sensitivity.md](results/mapping_sensitivity.md)):
+re-scoring from cached vectors with an *expanded* mapping (`Halftime`→dnb, `Grime`→
+garage_dubstep — the adjacent styles the models do reach for) moves overall accuracy by
+**≤0.5 points**, dnb by at most +1 (and −3 in one model, as garage's new `Grime` label
+steals dnb clips), garage by +1–2. All six MTG-Jamendo models are **unchanged** (no
+equivalent tags exist). The conclusion is robust to the mapping: **this is genuine model
+failure on this material, not a labelling artifact.**
 
 ## Recommendations
 
