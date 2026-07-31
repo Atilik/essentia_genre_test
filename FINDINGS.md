@@ -129,8 +129,11 @@ failure on this material, not a labelling artifact.**
 - **Short clips are tiled (looped) to satisfy model minimums**: EffNet emits no patches
   below ~2 s; MAEST errors below its 5–30 s context. All clips are tiled up to 3 s
   (EffNet) or context+2 s (MAEST). For a 0.3 s hi-hat this manufactures an artificial
-  rhythm — the one-shot numbers, especially for long-context MAEST, must be read with
-  this in mind. Without it those models cannot process one-shots at all.
+  rhythm — but a **zero-padding control** ([results/padding_control.md](results/padding_control.md))
+  shows every conclusion survives: loop accuracy is identical (52→52, 70→70), zero-pad is
+  if anything *worse* on one-shots (silence drowns the signal), and the dnb/garage
+  collapse persists — so it is not a tiling artifact. Tiling is needed because these
+  models cannot process sub-minimum clips at all.
 - **Ground truth is pack provenance, not perceived genre.** A piano or vocal loop from a
   dnb pack is labelled dnb even if it sounds genre-neutral — part of why dnb scores low.
   Ambiguous-type folders (FX, atmos, pads, textures, vocals) were excluded.

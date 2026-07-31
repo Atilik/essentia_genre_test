@@ -28,4 +28,4 @@ __pycache__/
 *.pyc
 
 # Keep: scripts/, sbatch/, results/*.json, results/summary.md, FINDINGS.md,
-#       data/ground_truth.csv, data/eval_set.csv, pylib/six.py, sing/singrw/.sifpath
+#       data/ground_truth.csv, data/eval_set.csv, pylib/six.py, sing/singrw/.sifpathresults/scores_zero/

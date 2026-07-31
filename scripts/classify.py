@@ -96,14 +96,19 @@ def build_runner(model):
     return sr, classes, predict, min_input_samples(model, sr)
 
 
-def load_audio(path, sr, min_samples=0):
-    """Load mono @ sr. If min_samples>0 and the clip is shorter, tile (loop) it up
-    to min_samples so long-context MAEST models get a full patch."""
+def load_audio(path, sr, min_samples=0, pad="tile"):
+    """Load mono @ sr. If min_samples>0 and the clip is shorter, extend it to
+    min_samples. pad='tile' loops the clip (default; loops are made to repeat);
+    pad='zero' appends silence (control — avoids manufacturing a rhythm)."""
     import essentia.standard as es
     audio = es.MonoLoader(filename=path, sampleRate=sr, resampleQuality=4)()
     if min_samples and audio.size and len(audio) < min_samples:
-        reps = int(np.ceil(min_samples / len(audio)))
-        audio = np.tile(audio, reps)[:min_samples]
+        if pad == "zero":
+            audio = np.concatenate(
+                [audio, np.zeros(min_samples - len(audio), dtype=audio.dtype)])
+        else:
+            reps = int(np.ceil(min_samples / len(audio)))
+            audio = np.tile(audio, reps)[:min_samples]
     return audio
 
 
@@ -112,6 +117,8 @@ def main():
     ap.add_argument("--model", required=True, choices=list(BY_NAME))
     ap.add_argument("--eval", default=EVAL)
     ap.add_argument("--limit", type=int, default=None, help="first N clips (smoke test)")
+    ap.add_argument("--pad", choices=["tile", "zero"], default="tile",
+                    help="how to extend clips below the backbone minimum")
     ap.add_argument("--out", default=OUT_DIR)
     args = ap.parse_args()
 
@@ -132,7 +139,7 @@ def main():
     t0 = time.time()
     for i, r in enumerate(rows):
         try:
-            audio = load_audio(r["path"], sr, min_samples)
+            audio = load_audio(r["path"], sr, min_samples, args.pad)
             if audio.size == 0:
                 raise ValueError("empty audio")
             frame_scores = predict(audio)                 # [frames, n_classes]
