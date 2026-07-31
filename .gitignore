@@ -17,6 +17,7 @@ models/heads/
 
 # Cached raw scores (regenerate via classify.py)
 results/scores/
+results/scores_zero/
 
 # SLURM logs
 logs/*.out
@@ -27,5 +28,6 @@ pylib/__pycache__/
 __pycache__/
 *.pyc
 
-# Keep: scripts/, sbatch/, results/*.json, results/summary.md, FINDINGS.md,
-#       data/ground_truth.csv, data/eval_set.csv, pylib/six.py, sing/singrw/.sifpathresults/scores_zero/
+# Keep: scripts/, results/*.json, results/*.md, FINDINGS.md, README.md,
+#       data/ground_truth.csv, data/eval_set.csv, pylib/six.py
+
