@@ -31,3 +31,7 @@ __pycache__/
 # Keep: scripts/, results/*.json, results/*.md, FINDINGS.md, README.md,
 #       data/ground_truth.csv, data/eval_set.csv, pylib/six.py
 
+
+# Beats full-track experiment: regenerable feature caches (re-extract via extract_beats.py)
+results/beats/emb/
+results/beats/pred/
