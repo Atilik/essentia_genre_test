@@ -35,3 +35,4 @@ __pycache__/
 # Beats full-track experiment: regenerable feature caches (re-extract via extract_beats.py)
 results/beats/emb/
 results/beats/pred/
+results/beats/jamendo_penult512.npy

@@ -44,19 +44,23 @@ MTG-Jamendo isn't a separate representation — it's an 87-tag head on the same 
 embeddings we already probe. Its only distinct contribution is its genre-OUTPUT vector. Probing
 that ("fingerprint") instead of the raw embedding:
 
-| features | dim | 23-way acc |
-|---|--:|--:|
-| discogs_artist embedding | 1280 | **65.4** |
-| discogs-effnet-bs64 embedding | 1280 | 63.8 |
-| MTG-Jamendo predictions | 87 | 58.8 |
-| Discogs400 predictions | 400 | 58.0 |
+A monotonic staircase down through the MTG-Jamendo head — each layer discards subgenre info:
 
-Training on a model's genre output is **~5–7 pts worse** than training on the embedding it sits
-on: the head has compressed away detail that fine subgenre separation needs. (MTG-Jamendo's 87-d
-output slightly beats Discogs400's 400-d output — broad tags are about as informative here, both
-lossy vs the embedding.) Ranking: **raw embedding (65%) > genre fingerprint (58%) > zero-shot
-(49% Discogs / 36% MTG)** — the more directly / task-specifically you use the model, the more
-subgenre information survives. This is why the probe uses embeddings, not predictions.
+| features (probe) | dim | 23-way acc | what it is |
+|---|--:|--:|---|
+| discogs_artist embedding | 1280 | **65.4** | best raw embedding |
+| discogs-effnet-bs64 embedding | 1280 | 63.8 | the embedding MTG-Jamendo runs on |
+| MTG-Jamendo **penultimate** (`model/dense/BiasAdd`) | 512 | 62.3 | its genre-tuned internal layer |
+| MTG-Jamendo predictions | 87 | 58.8 | its 87-tag output (fingerprint) |
+| Discogs400 predictions | 400 | 58.0 | Discogs400 output (fingerprint) |
+| MTG-Jamendo **zero-shot** (fixed head) | — | 36.0 / 57.3 | off-the-shelf argmax |
+
+The key detail: MTG-Jamendo's **penultimate (62.3) is nearly as good as the raw embedding it's
+computed from (63.8)** — its genre tuning barely hurts at that stage. The real losses come later:
+the **87-genre bottleneck** costs ~3.5 pts, and the **fixed off-the-shelf head** costs the rest
+(→36). So it's not the learned representation that's the problem — it's the coarse output layer +
+frozen head. Ranking: **raw embedding (65) ≳ penultimate (62) > fingerprint (58) > zero-shot
+(36–49)**. Train your own head on the embeddings (or MTG's penultimate); don't use its output.
 
 ### Per-genre recall (best embedding, discogs_artist)
 Strong: PsyTrance/Trance **92.5**, DrumAndBass **90**, HardDance 87.5, Breaks/Hardcore 85,
