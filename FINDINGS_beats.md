@@ -38,6 +38,26 @@ Concatenating all six doesn't beat the best single embedding — they're largely
 (all are EffNet-Discogs projections). A linear probe already captures most of it (logreg ≈
 nearest-centroid), i.e. the genres are close to linearly separable in these spaces.
 
+### Why not train on MTG-Jamendo? Fingerprint probe
+
+MTG-Jamendo isn't a separate representation — it's an 87-tag head on the same Discogs-EffNet
+embeddings we already probe. Its only distinct contribution is its genre-OUTPUT vector. Probing
+that ("fingerprint") instead of the raw embedding:
+
+| features | dim | 23-way acc |
+|---|--:|--:|
+| discogs_artist embedding | 1280 | **65.4** |
+| discogs-effnet-bs64 embedding | 1280 | 63.8 |
+| MTG-Jamendo predictions | 87 | 58.8 |
+| Discogs400 predictions | 400 | 58.0 |
+
+Training on a model's genre output is **~5–7 pts worse** than training on the embedding it sits
+on: the head has compressed away detail that fine subgenre separation needs. (MTG-Jamendo's 87-d
+output slightly beats Discogs400's 400-d output — broad tags are about as informative here, both
+lossy vs the embedding.) Ranking: **raw embedding (65%) > genre fingerprint (58%) > zero-shot
+(49% Discogs / 36% MTG)** — the more directly / task-specifically you use the model, the more
+subgenre information survives. This is why the probe uses embeddings, not predictions.
+
 ### Per-genre recall (best embedding, discogs_artist)
 Strong: PsyTrance/Trance **92.5**, DrumAndBass **90**, HardDance 87.5, Breaks/Hardcore 85,
 GlitchHop 80. Weak: **DeepHouse 42.5, House 50, TechHouse/ElectroHouse/FutureHouse 52.5**.
